@@ -1,0 +1,3 @@
+(function spaceInvader(Rx){
+
+})(Rx);
