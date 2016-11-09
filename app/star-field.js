@@ -79,12 +79,43 @@
     paintSpaceShip(actors.spaceship.x, actors.spaceship.y);
   };
 
+  // Enemies.js
+  const ENEMY_FREQ = 1500;
+  const Enemies = Rx.Observable
+    .interval(ENEMY_FREQ)
+    .scan((enemyArray) => {
+      enemyArray.push({
+        x: parseInt(Math.random() * canvas.width),
+        y: -30
+      });
+      return enemyArray;
+    }, []);
+
+  const paintEnemies = (enemies) => {
+    enemies.forEach((enemy) => {
+      enemy.x += getRandomInt(-15, 15);
+      enemy.y += 5;
+
+      drawTriangle(enemy.x, enemy.y, 20, '#00ff00', 'down');
+    });
+  };
+
+  // Utilities.js
+  function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  // Game.js
   const Game = Rx.Observable
     .combineLatest(
-      StarStream, SpaceShip,
-      (stars, spaceship) => ({ stars, spaceship })
-    );
+      StarStream, SpaceShip, Enemies,
+      (stars, spaceship, enemies) => ({ stars, spaceship, enemies })
+    )
+    .sample(SPEED);
 
   Game.subscribe(renderScene);
+
+
+
 
 })(Rx);
