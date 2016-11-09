@@ -2,6 +2,7 @@
   let canvas = document.createElement('canvas');
   let ctx = canvas.getContext('2d');
 
+  canvas.id = 'game-canvas';
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
 
@@ -21,7 +22,7 @@
   };
   const SPEED = 40;
   const STAR_NUMBER = 250;
-  const starStream = Rx.Observable
+  const StarStream = Rx.Observable
     .range(1, STAR_NUMBER)
     .map(() => ({
       x: parseInt(Math.random() * canvas.width, 10),
@@ -41,9 +42,49 @@
 
           return starArray;
         });
-    })
-    .subscribe((starArray) => {
-      paintStars(starArray);
     });
+    /*.subscribe((starArray) => {
+      paintStars(starArray);
+    });*/
+
+  // Hero.js
+  const HERO_Y = canvas.height - 30;
+  const drawTriangle = (x, y, width, color, direction) => {
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(x - width, y);
+    ctx.lineTo(x, direction === 'up' ? y - width : y + width);
+    ctx.lineTo(x + width, y);
+    ctx.lineTo(x - width, y);
+    ctx.fill();
+  };
+  const paintSpaceShip = (x, y) => {
+    var yBoundaries = Math.max(Math.min(y, HERO_Y), 30);
+    drawTriangle(x, yBoundaries, 20, '#ff0000', 'up');
+  };
+
+  const mouseMoveStream = Rx.Observable.fromEvent(canvas, 'mousemove');
+  const SpaceShip = mouseMoveStream
+    .map((event) => ({
+      x: event.clientX,
+      y: event.clientY
+    }))
+    .startWith({
+      x: canvas.width / 2,
+      y: HERO_Y
+    });
+
+  const renderScene = (actors) => {
+    paintStars(actors.stars);
+    paintSpaceShip(actors.spaceship.x, actors.spaceship.y);
+  };
+
+  const Game = Rx.Observable
+    .combineLatest(
+      StarStream, SpaceShip,
+      (stars, spaceship) => ({ stars, spaceship })
+    );
+
+  Game.subscribe(renderScene);
 
 })(Rx);

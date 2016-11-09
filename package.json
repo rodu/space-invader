@@ -1,0 +1,21 @@
+{
+  "name": "space-invader",
+  "version": "1.0.0",
+  "description": "A small game while learning RxJS",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "http-server -o /usr/bin/google-chrome"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rodu/space-invader.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rodu/space-invader/issues"
+  },
+  "homepage": "https://github.com/rodu/space-invader#readme"
+}
