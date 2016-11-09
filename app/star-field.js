@@ -74,11 +74,6 @@
       y: HERO_Y
     });
 
-  const renderScene = (actors) => {
-    paintStars(actors.stars);
-    paintSpaceShip(actors.spaceship.x, actors.spaceship.y);
-  };
-
   // Enemies.js
   const ENEMY_FREQ = 1500;
   const Enemies = Rx.Observable
@@ -93,7 +88,7 @@
 
   const paintEnemies = (enemies) => {
     enemies.forEach((enemy) => {
-      enemy.x += getRandomInt(-15, 15);
+      enemy.x += getRandomInt(-10, 10);
       enemy.y += 5;
 
       drawTriangle(enemy.x, enemy.y, 20, '#00ff00', 'down');
@@ -104,6 +99,12 @@
   function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
+
+  const renderScene = (actors) => {
+    paintStars(actors.stars);
+    paintSpaceShip(actors.spaceship.x, actors.spaceship.y);
+    paintEnemies(actors.enemies);
+  };
 
   // Game.js
   const Game = Rx.Observable
