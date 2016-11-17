@@ -59,7 +59,7 @@
     ctx.fill();
   };
   const paintSpaceShip = (x, y) => {
-    var yBoundaries = Math.max(Math.min(y, HERO_Y), 30);
+    let yBoundaries = Math.max(Math.min(y, HERO_Y), 30);
     drawTriangle(x, yBoundaries, 20, '#ff0000', 'up');
   };
 
@@ -96,7 +96,7 @@
   };
 
   // Utilities.js
-  function getRandomInt(min, max) {
+  function getRandomInt(min, max){
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
@@ -115,8 +115,5 @@
     .sample(SPEED);
 
   Game.subscribe(renderScene);
-
-
-
 
 })(Rx);
