@@ -100,17 +100,56 @@
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
+  // fire.js
+  const playerFiring = Rx.Observable
+    .merge(
+      Rx.Observable.fromEvent(canvas, 'click'),
+      Rx.Observable.fromEvent(document, 'keydown')
+        .filter((event) => event.keyCode === 32)
+    )
+    .startWith({})
+    .sample(200)
+    .timestamp();
+
+  const HeroShots = Rx.Observable
+    .combineLatest(
+      playerFiring,
+      SpaceShip,
+      (shotEvents, spaceship) => ({
+        x: spaceship.x,
+        y: spaceship.y,
+        timestamp: shotEvents.timestamp
+      })
+    )
+    .distinctUntilChanged((shot) => shot.timestamp)
+    .scan((shotArray, shot) => {
+      shotArray.push({ x: shot.x, y: shot.y });
+      return shotArray;
+    }, []);
+
+  const SHOOTING_SPEED = 15;
+  function paintHeroShots(heroShots){
+    heroShots.forEach((shot) => {
+      shot.y -= SHOOTING_SPEED;
+      drawTriangle(shot.x, shot.y, 5, '#ffff00', 'up');
+    });
+  }
+
+
+  // Game.js
   const renderScene = (actors) => {
     paintStars(actors.stars);
     paintSpaceShip(actors.spaceship.x, actors.spaceship.y);
     paintEnemies(actors.enemies);
+    paintHeroShots(actors.heroShots);
   };
 
-  // Game.js
   const Game = Rx.Observable
     .combineLatest(
-      StarStream, SpaceShip, Enemies,
-      (stars, spaceship, enemies) => ({ stars, spaceship, enemies })
+      StarStream, SpaceShip, Enemies, HeroShots,
+      (stars, spaceship, enemies, heroShots) => ({
+        stars, spaceship, enemies, heroShots
+      })
     )
     .sample(SPEED);
 
